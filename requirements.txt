@@ -1,0 +1,7 @@
+click
+json-logic
+phabricator
+requests
+pylint
+flake8
+prompt-toolkit
