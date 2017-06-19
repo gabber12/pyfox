@@ -38,7 +38,8 @@ class Foxtrot(object):
         }
 
     def select(self, query):
-        api = urljoin(self.uri, 'v1/fql')
+        api = urljoin(self.uri, 'foxtrot/v1/fql')
+        print api
         try:
             res = requests.post(api, data=query, headers=self.headers, timeout=2)
             if res.status_code == 204:
@@ -48,5 +49,5 @@ class Foxtrot(object):
             return QueryResult(res.json())
         except requests.exceptions.ConnectionError:
             raise FoxtrotException("Could not connect to node")
-        except ValueError:
-            raise FoxtrotException("Unknown response")
+        except ValueError as e:
+            raise FoxtrotException("Unknown response"+e)
