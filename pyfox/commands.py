@@ -77,6 +77,8 @@ class FoxtrotShell(object):
                                     completer=sql_completer, get_title=lambda: "Foxtrot", enable_history_search=True,
                                     get_bottom_toolbar_tokens=get_bottom_toolbar_tokens, style=style)
 
+                if query_text is None or len(query_text) == 0:
+                    continue
                 results = self.text_processor.process(query_text)
                 PagedPresenter(JsonFormatter()).present(results)
                 self._update_completion(results)
