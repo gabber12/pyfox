@@ -1,10 +1,11 @@
+import sys
 class FoxtrotTextProcessor(object):
     def __init__(self, nextProcessor=None):
         self.nextProcessor = nextProcessor
 
     def process(self, text):
         if text == 'exit':
-            raise Exception('Goodbye')
+            sys.exit(0)
         return self.nextProcessor.process(text)
 
 

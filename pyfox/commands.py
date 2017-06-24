@@ -1,5 +1,4 @@
 #!/Users/shubham.ppe/workspace/offer-engine/venv/bin/python2.7
-from __future__ import unicode_literals
 import json
 import os
 import sys
@@ -13,6 +12,7 @@ from prompt_toolkit.contrib.completers import WordCompleter
 from pygments.lexers import SqlLexer
 from utils import traverse_nested_dict
 from view import JsonFormatter, PagedPresenter
+import click
 
 
 class FoxtrotShell(object):
@@ -62,19 +62,19 @@ class FoxtrotShell(object):
         self.init()
         connection_status = self.host
         style = style_from_dict({
-            Token.Toolbar: '#ffffff bg:#333333',
+            Token.Toolbar: u'#ffffff bg:#333333',
         })
 
         def get_bottom_toolbar_tokens(cli):
-            return [(Token.Toolbar, 'Status - %s' % connection_status)]
+            return [(Token.Toolbar, u'Status - %s' % connection_status)]
         sql_completer = WordCompleter(self.completion_array, ignore_case=True)
 
         # repl
         # TODO: Too much kwargs try unpack from dict
         while True:
             try:
-                query_text = prompt("> ", lexer=SqlLexer, history=self.history,
-                                    completer=sql_completer, get_title=lambda: "Foxtrot", enable_history_search=True,
+                query_text = prompt(u"> ", lexer=SqlLexer, history=self.history,
+                                    completer=sql_completer, get_title=lambda: u"Foxtrot", enable_history_search=True,
                                     get_bottom_toolbar_tokens=get_bottom_toolbar_tokens, style=style)
 
                 if query_text is None or len(query_text) == 0:
@@ -88,20 +88,28 @@ class FoxtrotShell(object):
                 print "GoodBye"
                 break
 
-
-def boot(host):
+def get_text_processor(host):
     client = Foxtrot(host)
     query_processor = FoxtrotQueryProcessor(client)
     input_processor = FoxtrotTextProcessor(query_processor)
-    shell = FoxtrotShell(host, input_processor)
+    return input_processor
 
+def boot_shell(host, input_processor):
+    shell = FoxtrotShell(host, input_processor)
     shell.start_prompt()
 
-def main():
-    if len(sys.argv) < 2:
-        print "Please provide endpoint"
-        sys.exit()
-    boot(sys.argv[1])
+
+@click.command()
+@click.argument("host")
+@click.option("--evaluate", default=None, help='Query to be evaluated')
+def command(host, evaluate):
+    """ Use FQL to query foxtrot """
+    input_processor = get_text_processor(host)
+    if evaluate is not None:
+       click.echo(JsonFormatter().format(input_processor.process(evaluate).rows(), os.popen('stty size', 'r').read().split()))
+       return;
+    boot_shell(host, input_processor)
+
 
 if __name__ == '__main__':
-    main()
+    command()
