@@ -22,9 +22,10 @@ Usage: commands.py [OPTIONS] HOST
     --evaluate TEXT  Query to be evaluated
       --help           Show this message and exit.
 
-foxtrot <endpoint>
+$ foxtrot <endpoint>
 > select * from analytics_event
 Ctrl-D to exit or type exit
+
 ```
 
 #### Client
