@@ -10,6 +10,8 @@ pip install pyfox --ignore-installed six
 ```
 
 ## Usage
+#### Shell
+
 ```sh
 $ foxtrot --help
 Usage: commands.py [OPTIONS] HOST
@@ -23,6 +25,16 @@ Usage: commands.py [OPTIONS] HOST
 foxtrot <endpoint>
 > select * from analytics_event
 Ctrl-D to exit or type exit
+```
+
+#### Client
+
+```python
+from pyfox import Foxtrot
+client = Foxtrot(host)
+result = client.select("select * from test_db")
+for event in result.rows():
+    print event['id']
 ```
 
 
